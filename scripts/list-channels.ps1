@@ -3,7 +3,10 @@ $token = $null
 foreach ($line in Get-Content $envPath) {
   if ($line -match '^\s*DISCORD_BOT_TOKEN\s*=\s*(.+?)\s*$') { $token = $matches[1] }
 }
-$headers = @{ Authorization = "Bot $token" }
+$headers = @{
+  Authorization = "Bot $token"
+  "User-Agent"  = "DiscordBot (https://nyancow.gg, 1.0)"
+}
 $guildId = "347763631351660544"
 try {
   $channels = Invoke-RestMethod -Uri "https://discord.com/api/v10/guilds/$guildId/channels" -Headers $headers -Method Get

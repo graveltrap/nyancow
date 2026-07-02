@@ -5,7 +5,8 @@ Usage: powershell -File fetch-channel.ps1 -ChannelId 1411861311838490644
 #>
 param(
   [Parameter(Mandatory=$true)][string]$ChannelId,
-  [int]$Limit = 100
+  [int]$Limit = 100,
+  [string]$OutFile = "fetch-output.json"
 )
 
 $envPath = Join-Path $PSScriptRoot "..\.env"
@@ -17,7 +18,10 @@ foreach ($line in Get-Content $envPath) {
 }
 if (-not $token) { throw "DISCORD_BOT_TOKEN not found in .env" }
 
-$headers = @{ Authorization = "Bot $token" }
+$headers = @{
+  Authorization = "Bot $token"
+  "User-Agent"  = "DiscordBot (https://nyancow.gg, 1.0)"
+}
 $all = @()
 $before = $null
 
@@ -39,6 +43,6 @@ $simplified = $all | ForEach-Object {
   }
 }
 
-$outPath = Join-Path $PSScriptRoot "fetch-output.json"
+$outPath = Join-Path $PSScriptRoot $OutFile
 $simplified | ConvertTo-Json -Depth 5 | Out-File -FilePath $outPath -Encoding utf8
 Write-Output "Wrote $($simplified.Count) messages to $outPath"
