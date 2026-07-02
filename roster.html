@@ -59,12 +59,8 @@
 <section class="section alt">
   <div class="wrap">
     <h2>Full Roster</h2>
-    <div class="roster-grid">
-      <div class="roster-card">Handle</div>
-      <div class="roster-card">Handle</div>
-      <div class="roster-card">Handle</div>
-      <div class="roster-card">Handle</div>
-    </div>
+    <p class="roster-count" id="roster-count">Loading roster…</p>
+    <div id="roster-groups"></div>
   </div>
 </section>
 
@@ -73,6 +69,49 @@
     <span>&copy; Nyan Cow</span>
   </div>
 </footer>
+
+<script>
+const RANK_ORDER = ['Leader', 'Officer', 'Member', 'Recruit'];
+
+fetch('/roster.json')
+  .then(r => r.json())
+  .then(members => {
+    document.getElementById('roster-count').textContent = `${members.length} members`;
+
+    const groups = {};
+    for (const m of members) {
+      (groups[m.rank] ||= []).push(m);
+    }
+
+    const container = document.getElementById('roster-groups');
+    for (const rank of RANK_ORDER) {
+      const group = groups[rank];
+      if (!group || !group.length) continue;
+
+      const section = document.createElement('div');
+      section.className = 'rank-group';
+
+      const heading = document.createElement('h3');
+      heading.textContent = `${rank} (${group.length})`;
+      section.appendChild(heading);
+
+      const grid = document.createElement('div');
+      grid.className = 'roster-grid';
+      for (const m of group) {
+        const card = document.createElement('div');
+        card.className = 'roster-card';
+        const displayName = m.handle.split('#')[0];
+        card.textContent = m.character ? `${displayName} (${m.character})` : displayName;
+        grid.appendChild(card);
+      }
+      section.appendChild(grid);
+      container.appendChild(section);
+    }
+  })
+  .catch(() => {
+    document.getElementById('roster-count').textContent = 'Roster failed to load — check roster.json.';
+  });
+</script>
 
 </body>
 </html>

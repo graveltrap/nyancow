@@ -1,11 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Barlow+Condensed:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+
 :root {
   --bg: #0d0f14;
   --bg-alt: #14171f;
+  --void: #050608;
   --fg: #e8e6f0;
   --muted: #9a97ab;
   --accent: #ff3d5a;
   --accent-2: #ffb703;
   --border: #24283a;
+  --rot: #3a1f1a;
+  --glow-red: #ff1f3d;
+  --trail: linear-gradient(90deg, #ff3d5a 0%, #ffb703 20%, #f9f871 40%, #4dff9e 60%, #4da8ff 80%, #b45dff 100%);
+  --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --font-body: 'Barlow Condensed', 'Segoe UI', system-ui, sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,9 +22,20 @@
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--font-body);
+  font-size: 18px;
   line-height: 1.5;
 }
+
+.trail-rule {
+  height: 4px;
+  background: var(--trail);
+  border-radius: 2px;
+  filter: saturate(1.3);
+  border: none;
+}
+
+.glow-red { text-shadow: 0 0 8px var(--glow-red), 0 0 24px var(--accent); }
 
 .wrap {
   max-width: 1100px;
@@ -40,10 +60,12 @@ body {
   padding-bottom: 16px;
 }
 .brand-mark {
+  font-family: var(--font-display);
   font-size: 1.3rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--accent);
+  text-decoration: none;
 }
 nav a {
   color: var(--fg);
@@ -66,8 +88,10 @@ nav a:hover { color: var(--accent); }
   background: radial-gradient(ellipse at top, var(--bg-alt), var(--bg));
 }
 .hero h1 {
+  font-family: var(--font-display);
   font-size: 4rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
   background-clip: text;
@@ -93,7 +117,9 @@ nav a:hover { color: var(--accent); }
 .section { padding: 80px 0; }
 .section.alt { background: var(--bg-alt); }
 .section h2 {
+  font-family: var(--font-display);
   font-size: 2rem;
+  letter-spacing: 0.03em;
   margin-bottom: 8px;
 }
 .section-note {
@@ -112,8 +138,10 @@ nav a:hover { color: var(--accent); }
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 20px;
+  transition: border-color 0.2s;
 }
-.card h3 { color: var(--accent-2); margin-bottom: 4px; }
+.card:hover { border-color: var(--accent); }
+.card h3 { font-family: var(--font-display); color: var(--accent-2); margin-bottom: 4px; font-size: 1.1rem; }
 .card .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
 
 .roster-card {
@@ -124,6 +152,29 @@ nav a:hover { color: var(--accent); }
   text-align: center;
   font-weight: 600;
 }
+
+.rank-group { margin-bottom: 40px; }
+.rank-group h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin-bottom: 16px;
+}
+.rank-badge {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  background: var(--accent);
+  color: var(--void);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.rank-badge.leader { background: var(--trail); }
+.roster-count { color: var(--muted); font-size: 0.85rem; }
 
 .join { text-align: center; }
 .join p { color: var(--muted); max-width: 500px; margin: 12px auto 28px; }
@@ -209,7 +260,7 @@ nav a:hover { color: var(--accent); }
   padding: 64px 24px 32px;
   text-align: center;
 }
-.page-hero h1 { font-size: 2.4rem; margin-bottom: 8px; }
+.page-hero h1 { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
 .page-hero p { color: var(--muted); max-width: 600px; margin: 0 auto; }
 
 .placeholder-note {
