@@ -166,15 +166,19 @@ nav a:hover { color: var(--accent); }
   gap: 20px;
 }
 .card {
+  display: block;
   background: var(--bg-alt);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 20px;
   transition: border-color 0.2s;
+  color: var(--fg);
+  text-decoration: none;
 }
-.card:hover { border-color: var(--accent); }
+a.card:hover { border-color: var(--accent); cursor: pointer; }
 .card h3 { font-family: var(--font-display); color: var(--accent-2); margin-bottom: 4px; font-size: 1.1rem; }
 .card .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
+.card p:not(.meta) { color: var(--fg); }
 
 @media (max-width: 640px) {
   .roster-grid { grid-template-columns: repeat(2, 1fr) !important; }
