@@ -37,6 +37,24 @@ body {
 
 .glow-red { text-shadow: 0 0 8px var(--glow-red), 0 0 24px var(--accent); }
 
+.featured-quote {
+  text-align: center;
+  background: var(--void);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px 24px;
+  margin-bottom: 40px;
+}
+.featured-quote-lead {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+.featured-quote-line { color: var(--fg); font-size: 1.1rem; margin-bottom: 4px; }
+.featured-quote-punchline { color: var(--accent-2); font-style: italic; margin: 16px 0 12px; font-size: 1.05rem; }
+.featured-quote .meta { color: var(--muted); font-size: 0.85rem; }
+
 .wrap {
   max-width: 1100px;
   margin: 0 auto;
@@ -280,13 +298,13 @@ nav a:hover { color: var(--accent); }
 .video-card h3 { color: var(--accent-2); margin-bottom: 4px; }
 .video-card .meta { color: var(--muted); font-size: 0.85rem; }
 
-/* simple page hero for sub-pages */
+/* simple page hero for sub-pages — override --hero-img/--hero-pos per page for variety */
 .page-hero {
   padding: 90px 24px 48px;
   text-align: center;
   background:
     linear-gradient(180deg, rgba(5,6,8,0.45) 0%, rgba(5,6,8,0.75) 70%, var(--bg) 100%),
-    url('/assets/cow-bg-2.png') center 25% / cover no-repeat;
+    var(--hero-img, url('/assets/cow-bg-2.png')) center var(--hero-pos, 25%) / cover no-repeat;
 }
 .page-hero h1 {
   font-family: var(--font-display);
