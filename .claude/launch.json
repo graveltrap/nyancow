@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nyancow-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "-l", "6420", "."],
+      "port": 6420,
+      "autoPort": false
+    }
+  ]
+}
