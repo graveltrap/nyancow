@@ -72,8 +72,9 @@
 
 <script>
 const RANK_ORDER = ['Leader', 'Officer', 'Member', 'Recruit'];
+const RANK_COLUMNS = { Leader: 2, Officer: 3, Member: 4, Recruit: 4 };
 
-fetch('/roster.json')
+fetch('/roster.json', { cache: 'no-store' })
   .then(r => r.json())
   .then(members => {
     document.getElementById('roster-count').textContent = `${members.length} members`;
@@ -97,6 +98,7 @@ fetch('/roster.json')
 
       const grid = document.createElement('div');
       grid.className = 'roster-grid';
+      grid.style.gridTemplateColumns = `repeat(${RANK_COLUMNS[rank] || 4}, 1fr)`;
       for (const m of group) {
         const card = document.createElement('div');
         card.className = 'roster-card';
