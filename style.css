@@ -60,6 +60,9 @@ body {
   padding-bottom: 16px;
 }
 .brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;
@@ -67,6 +70,7 @@ body {
   color: var(--accent);
   text-decoration: none;
 }
+.brand-mark img { height: 32px; width: 32px; border-radius: 50%; }
 nav a {
   color: var(--fg);
   text-decoration: none;
@@ -84,8 +88,11 @@ nav a:hover { color: var(--accent); }
 /* hero */
 .hero {
   text-align: center;
-  padding: 100px 24px;
-  background: radial-gradient(ellipse at top, var(--bg-alt), var(--bg));
+  padding: 140px 24px 100px;
+  background:
+    linear-gradient(180deg, rgba(5,6,8,0.35) 0%, rgba(5,6,8,0.55) 55%, var(--void) 100%),
+    url('/assets/mascot-hero.png') center 30% / cover no-repeat,
+    radial-gradient(ellipse at top, var(--bg-alt), var(--bg));
 }
 .hero h1 {
   font-family: var(--font-display);
@@ -115,7 +122,11 @@ nav a:hover { color: var(--accent); }
 
 /* sections */
 .section { padding: 80px 0; }
-.section.alt { background: var(--bg-alt); }
+.section.alt {
+  background:
+    linear-gradient(rgba(20,23,31,0.92), rgba(20,23,31,0.92)),
+    url('/assets/cow-bg-1.png') center / cover no-repeat;
+}
 .section h2 {
   font-family: var(--font-display);
   font-size: 2rem;
