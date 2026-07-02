@@ -121,7 +121,10 @@ nav a:hover { color: var(--accent); }
 .cta:hover { opacity: 0.9; }
 
 /* sections */
-.section { padding: 80px 0; }
+.section {
+  padding: 80px 0;
+  background: radial-gradient(ellipse at 85% 100%, rgba(255,61,90,0.05), transparent 60%);
+}
 .section.alt {
   background:
     linear-gradient(rgba(20,23,31,0.92), rgba(20,23,31,0.92)),
@@ -191,12 +194,19 @@ nav a:hover { color: var(--accent); }
 .rank-badge.leader { background: var(--trail); }
 .roster-count { color: var(--muted); font-size: 0.85rem; }
 
-.join { text-align: center; }
+.join {
+  text-align: center;
+  background:
+    linear-gradient(180deg, var(--bg) 0%, rgba(5,6,8,0.55) 25%, rgba(5,6,8,0.8) 100%),
+    url('/assets/mascot-hero.png') center 15% / cover no-repeat;
+}
 .join p { color: var(--muted); max-width: 500px; margin: 12px auto 28px; }
 
 /* season banner */
 .season-banner {
-  background: linear-gradient(180deg, #1a0d10, var(--bg));
+  background:
+    linear-gradient(180deg, rgba(26,13,16,0.88), rgba(13,15,20,0.94)),
+    url('/assets/cow-bg-1.png') center 20% / cover no-repeat;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 48px 0;
@@ -272,11 +282,34 @@ nav a:hover { color: var(--accent); }
 
 /* simple page hero for sub-pages */
 .page-hero {
-  padding: 64px 24px 32px;
+  padding: 90px 24px 48px;
   text-align: center;
+  background:
+    linear-gradient(180deg, rgba(5,6,8,0.45) 0%, rgba(5,6,8,0.75) 70%, var(--bg) 100%),
+    url('/assets/cow-bg-2.png') center 25% / cover no-repeat;
 }
-.page-hero h1 { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+.page-hero h1 {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .page-hero p { color: var(--muted); max-width: 600px; margin: 0 auto; }
+.page-hero::after {
+  content: '';
+  display: block;
+  width: 160px;
+  height: 4px;
+  margin: 28px auto 0;
+  background: var(--trail);
+  border-radius: 2px;
+  filter: saturate(1.3);
+}
 
 .placeholder-note {
   border: 1px dashed var(--border);
