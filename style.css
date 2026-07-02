@@ -128,6 +128,99 @@ nav a:hover { color: var(--accent); }
 .join { text-align: center; }
 .join p { color: var(--muted); max-width: 500px; margin: 12px auto 28px; }
 
+/* season banner */
+.season-banner {
+  background: linear-gradient(180deg, #1a0d10, var(--bg));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 0;
+}
+.season-banner-inner { text-align: center; }
+.season-tag {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.season-banner h2 { font-size: 1.8rem; margin-bottom: 4px; }
+.season-meta { color: var(--accent-2); font-size: 0.9rem; margin-bottom: 16px; }
+.season-blurb { color: var(--muted); max-width: 700px; margin: 0 auto; }
+
+.section-cta { margin-top: 24px; }
+.section-cta a, .card a { color: var(--accent-2); }
+
+.about-teaser p { color: var(--muted); max-width: 700px; }
+
+/* class nav grid (builds index) */
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+.class-card {
+  display: block;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--fg);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.class-card:hover { border-color: var(--accent); color: var(--accent-2); }
+.class-card .tier { display: block; color: var(--muted); font-weight: 400; font-size: 0.8rem; margin-top: 6px; }
+
+/* spotlight cards */
+.spotlight-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.spotlight-card h3 { color: var(--accent-2); margin-bottom: 4px; }
+.spotlight-card .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; }
+
+/* video cards */
+.video-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.video-card .video-embed {
+  aspect-ratio: 16/9;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.video-card .video-info { padding: 16px; }
+.video-card h3 { color: var(--accent-2); margin-bottom: 4px; }
+.video-card .meta { color: var(--muted); font-size: 0.85rem; }
+
+/* simple page hero for sub-pages */
+.page-hero {
+  padding: 64px 24px 32px;
+  text-align: center;
+}
+.page-hero h1 { font-size: 2.4rem; margin-bottom: 8px; }
+.page-hero p { color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+.placeholder-note {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 32px;
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 24px 0;
