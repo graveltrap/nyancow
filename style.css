@@ -303,7 +303,7 @@ nav a:hover { color: var(--accent); }
   padding: 90px 24px 48px;
   text-align: center;
   background:
-    linear-gradient(180deg, rgba(5,6,8,0.45) 0%, rgba(5,6,8,0.75) 70%, var(--bg) 100%),
+    linear-gradient(180deg, var(--hero-tint, rgba(5,6,8,0.45)) 0%, var(--hero-tint-2, rgba(5,6,8,0.75)) 70%, var(--bg) 100%),
     var(--hero-img, url('/assets/cow-bg-2.png')) center var(--hero-pos, 25%) / cover no-repeat;
 }
 .page-hero h1 {
