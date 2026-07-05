@@ -104,6 +104,15 @@ nav a:hover { color: var(--accent); }
   padding: 8px 16px;
   border-radius: 6px;
 }
+.members-btn {
+  border: 1px solid var(--border);
+  color: var(--muted) !important;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+.members-btn:hover { border-color: var(--accent); color: var(--fg) !important; }
+.footer-members-link { color: var(--muted); }
+.footer-members-link:hover { color: var(--accent); }
 
 /* hero */
 .hero {
