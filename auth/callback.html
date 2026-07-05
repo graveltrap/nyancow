@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verifying… | Nyan Cow</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<section class="section" style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;">
+  <div class="wrap">
+    <p class="section-note">Verifying Discord membership&hellip;</p>
+  </div>
+</section>
+<script>
+(function () {
+  var GUILD_ID = '347763631351660544';
+  var INVITE = 'https://discord.gg/2HGQaUJrug';
+  var TOKEN_KEY = 'nc_discord_token';
+  var MEMBER_UNTIL_KEY = 'nc_member_until';
+  var RETURN_KEY = 'nc_return_to';
+
+  var hashParams = new URLSearchParams(location.hash.slice(1));
+  var queryParams = new URLSearchParams(location.search);
+  var token = hashParams.get('access_token');
+  var returnTo = sessionStorage.getItem(RETURN_KEY) || '/';
+
+  if (!token || queryParams.get('error')) {
+    location.replace(INVITE);
+    return;
+  }
+
+  localStorage.setItem(TOKEN_KEY, token);
+
+  fetch('https://discord.com/api/users/@me/guilds/' + GUILD_ID + '/member', {
+    headers: { Authorization: 'Bearer ' + token }
+  }).then(function (res) {
+    if (res.status === 200) {
+      localStorage.setItem(MEMBER_UNTIL_KEY, String(Date.now() + 12 * 60 * 60 * 1000));
+      sessionStorage.removeItem(RETURN_KEY);
+      location.replace(returnTo);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      location.replace(INVITE);
+    }
+  }).catch(function () {
+    location.replace(INVITE);
+  });
+})();
+</script>
+</body>
+</html>

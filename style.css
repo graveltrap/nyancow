@@ -19,6 +19,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html.nc-gate-pending body { display: none; }
+
 body {
   background: var(--bg);
   color: var(--fg);
