@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.classList.add('nc-gate-pending');</script>
+<script src="/assets/js/auth-gate.js"></script>
+<title>Arcade | Nyan Cow</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+  .arcade-shell {
+    max-width: 940px;
+    margin: 0 auto;
+    background: var(--void);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  #pit-canvas {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    background: #05060a;
+    cursor: none;
+  }
+  .arcade-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
+    color: var(--accent-2);
+    padding: 12px 4px 0;
+  }
+  .arcade-hud .mutator { color: var(--muted); }
+  .scorecard-box {
+    margin-top: 16px;
+    background: var(--bg-alt);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    display: none;
+  }
+  .scorecard-box.show { display: block; }
+  .scorecard-box code {
+    display: block;
+    font-family: var(--font-pixel);
+    font-size: 0.65rem;
+    color: var(--fg);
+    margin: 12px 0;
+    line-height: 1.8;
+    word-break: break-all;
+  }
+  .copy-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .copy-btn:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand"><a href="/" class="brand-mark"><img src="/assets/logo-mark.png" alt="">NYAN COW</a></div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/news.html">News</a>
+      <a href="/builds/">Builds</a>
+      <a href="/roster.html">Roster</a>
+      <a href="/about.html">About</a>
+      <a href="/videos.html">Videos</a>
+      <a href="/arcade.html">Arcade</a>
+      <a href="https://discord.gg/2HGQaUJrug" class="discord-btn" target="_blank" rel="noopener">Discord</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" style="--hero-img:url('/assets/cow-bg-1.png'); --hero-pos:50%;">
+  <div class="wrap">
+    <h1>The Cow Pit</h1>
+    <p>Members-only weekly arcade. New mutator every Monday. Winner takes the prize — check #announcements for this week's stakes.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="arcade-shell">
+      <canvas id="pit-canvas" width="900" height="506"></canvas>
+      <div class="arcade-hud">
+        <span id="hud-week">WEEK —</span>
+        <span id="hud-mutator" class="mutator"></span>
+        <span id="hud-best">BEST —</span>
+      </div>
+      <div id="scorecard" class="scorecard-box">
+        <h3 style="font-family:var(--font-display);color:var(--accent-2);">Run Complete</h3>
+        <code id="scorecard-text"></code>
+        <button class="copy-btn" id="copy-scorecard">Copy Score Card</button>
+        <p class="section-note" style="margin:12px 0 0;">Paste it in #show-off. Highest verified score when the week rolls over wins.</p>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:40px;">
+      <div class="card">
+        <h3>How It Works</h3>
+        <p class="meta">Rules</p>
+        <p>Fly the cow. Dodge the demon glyphs. Grab gold — each nugget is worth 50. Three hearts, then it's over. Arrow keys / WASD, or drag on touch.</p>
+      </div>
+      <div class="card">
+        <h3>Weekly Mutator</h3>
+        <p class="meta">Changes every Monday</p>
+        <p>The Pit reshuffles itself weekly — speed, demon density, and gold drought all shift. Same week, same Pit, for everyone. Fair fight.</p>
+      </div>
+      <div class="card">
+        <h3>The Prize</h3>
+        <p class="meta">Set in #announcements</p>
+        <p>Whatever leadership dreams up — "Clan Leader for 24 Hours" has been threatened. Post your score card in #show-off before Monday to enter.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; Nyan Cow</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var canvas = document.getElementById('pit-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  // ---- weekly seed: ISO week number + year, same for every member ----
+  function isoWeek(d) {
+    var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    var dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  }
+  var now = new Date();
+  var week = isoWeek(now);
+  var seed = week * 100 + (now.getFullYear() % 100);
+
+  function mulberry(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rng = mulberry(seed);
+
+  var MUTATOR_NAMES = ['BUTCHER\'S PASTURE', 'HELLTIDE HOEDOWN', 'MOO-RDER MILE', 'THE SALTED FIELD', 'PARAGON PADDOCK', 'BOVINE PLAGUELANDS', 'THE GRAZING DARK'];
+  var mutName = MUTATOR_NAMES[Math.floor(rng() * MUTATOR_NAMES.length)];
+  var baseSpeed = 2.2 + rng() * 1.6;      // scroll speed
+  var demonRate = 0.012 + rng() * 0.012;  // spawn probability per frame
+  var goldRate = 0.006 + rng() * 0.006;
+
+  document.getElementById('hud-week').textContent = 'WEEK ' + week;
+  document.getElementById('hud-mutator').textContent = mutName;
+
+  var bestKey = 'nc_pit_best_w' + week;
+  var best = parseInt(localStorage.getItem(bestKey) || '0', 10);
+  document.getElementById('hud-best').textContent = 'BEST ' + best;
+
+  // ---- game state ----
+  var cow = { x: 140, y: H / 2, vy: 0, r: 18 };
+  var trail = [], demons = [], nuggets = [], particles = [];
+  var keys = {}, dist = 0, gold = 0, hearts = 3, speed = baseSpeed;
+  var state = 'title'; // title | play | dead
+  var invuln = 0, frame = 0;
+  var TRAIL_COLORS = ['#ff3d5a', '#ffb703', '#f9f871', '#4dff9e', '#4da8ff', '#b45dff'];
+
+  document.addEventListener('keydown', function (e) {
+    keys[e.key.toLowerCase()] = true;
+    if ((state === 'title' || state === 'dead') && (e.key === ' ' || e.key === 'Enter')) start();
+    if ([' ', 'arrowup', 'arrowdown'].indexOf(e.key.toLowerCase()) >= 0) e.preventDefault();
+  });
+  document.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
+
+  var touchY = null;
+  canvas.addEventListener('pointerdown', function (e) {
+    if (state !== 'play') { start(); return; }
+    touchY = e.offsetY * (H / canvas.clientHeight);
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (state === 'play' && e.buttons) touchY = e.offsetY * (H / canvas.clientHeight);
+  });
+  canvas.addEventListener('pointerup', function () { touchY = null; });
+
+  function start() {
+    cow.y = H / 2; cow.vy = 0;
+    trail = []; demons = []; nuggets = []; particles = [];
+    dist = 0; gold = 0; hearts = 3; speed = baseSpeed; invuln = 0;
+    document.getElementById('scorecard').classList.remove('show');
+    state = 'play';
+  }
+
+  function scoreNow() { return Math.floor(dist / 10) + gold * 50; }
+
+  // proof code: verifiable-enough checksum so casual edits are obvious
+  function proofCode(score) {
+    var n = (score * 7919 + week * 31337 + 12345) % 1679616;
+    return ('0000' + n.toString(36).toUpperCase()).slice(-4);
+  }
+
+  function die() {
+    state = 'dead';
+    var score = scoreNow();
+    if (score > best) {
+      best = score;
+      localStorage.setItem(bestKey, String(best));
+      document.getElementById('hud-best').textContent = 'BEST ' + best;
+    }
+    var card = '🐄 COW PIT — Week ' + week + ' [' + mutName + ']\n' +
+      'Score: ' + score + '  (gold ' + gold + ')\n' +
+      'Proof: ' + proofCode(score) + '  ·  nyancow.gg/arcade';
+    document.getElementById('scorecard-text').textContent = card;
+    document.getElementById('scorecard').classList.add('show');
+    document.getElementById('copy-scorecard').onclick = function () {
+      navigator.clipboard.writeText(card);
+      this.textContent = 'Copied!';
+      var btn = this;
+      setTimeout(function () { btn.textContent = 'Copy Score Card'; }, 1500);
+    };
+  }
+
+  function burst(x, y, color, n) {
+    for (var i = 0; i < n; i++) {
+      particles.push({ x: x, y: y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6, life: 30, color: color });
+    }
+  }
+
+  function update() {
+    frame++;
+    if (state !== 'play') return;
+
+    // input
+    var up = keys['arrowup'] || keys['w'];
+    var down = keys['arrowdown'] || keys['s'];
+    if (touchY !== null) {
+      cow.vy += (touchY - cow.y) * 0.02;
+      cow.vy *= 0.85;
+    } else {
+      if (up) cow.vy -= 0.7;
+      if (down) cow.vy += 0.7;
+      cow.vy *= 0.92;
+    }
+    cow.y += cow.vy;
+    if (cow.y < cow.r) { cow.y = cow.r; cow.vy = 0; }
+    if (cow.y > H - cow.r) { cow.y = H - cow.r; cow.vy = 0; }
+
+    dist += speed;
+    speed += 0.0006; // slow ramp
+
+    trail.unshift({ x: cow.x - 14, y: cow.y });
+    if (trail.length > 40) trail.pop();
+    for (var i = 0; i < trail.length; i++) trail[i].x -= speed;
+
+    // spawns
+    if (Math.random() < demonRate + dist / 900000) {
+      demons.push({ x: W + 30, y: 30 + Math.random() * (H - 60), r: 14 + Math.random() * 10, spin: Math.random() * 6.28, wobble: Math.random() * 2 });
+    }
+    if (Math.random() < goldRate) {
+      nuggets.push({ x: W + 20, y: 30 + Math.random() * (H - 60), r: 9 });
+    }
+
+    if (invuln > 0) invuln--;
+
+    for (var d = demons.length - 1; d >= 0; d--) {
+      var dm = demons[d];
+      dm.x -= speed * 1.15;
+      dm.y += Math.sin(frame / 20 + dm.spin) * dm.wobble;
+      dm.spin += 0.08;
+      if (dm.x < -40) { demons.splice(d, 1); continue; }
+      var dx = dm.x - cow.x, dy = dm.y - cow.y;
+      if (invuln === 0 && dx * dx + dy * dy < (dm.r + cow.r - 6) * (dm.r + cow.r - 6)) {
+        hearts--; invuln = 90;
+        burst(cow.x, cow.y, '#ff1f3d', 24);
+        demons.splice(d, 1);
+        if (hearts <= 0) { die(); return; }
+      }
+    }
+
+    for (var g = nuggets.length - 1; g >= 0; g--) {
+      var nug = nuggets[g];
+      nug.x -= speed;
+      if (nug.x < -20) { nuggets.splice(g, 1); continue; }
+      var gx = nug.x - cow.x, gy = nug.y - cow.y;
+      if (gx * gx + gy * gy < (nug.r + cow.r) * (nug.r + cow.r)) {
+        gold++;
+        burst(nug.x, nug.y, '#ffb703', 12);
+        nuggets.splice(g, 1);
+      }
+    }
+
+    for (var p = particles.length - 1; p >= 0; p--) {
+      var pt = particles[p];
+      pt.x += pt.vx; pt.y += pt.vy; pt.life--;
+      if (pt.life <= 0) particles.splice(p, 1);
+    }
+  }
+
+  function drawCow(x, y, flashing) {
+    if (flashing && Math.floor(frame / 6) % 2 === 0) return;
+    ctx.save();
+    ctx.translate(x, y);
+    // body
+    ctx.fillStyle = '#16181f';
+    ctx.strokeStyle = '#2c2f3d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 22, 16, 0, 0, 6.28);
+    ctx.fill(); ctx.stroke();
+    // head
+    ctx.beginPath();
+    ctx.ellipse(16, -6, 12, 10, -0.2, 0, 6.28);
+    ctx.fill(); ctx.stroke();
+    // horns
+    ctx.strokeStyle = '#9a97ab';
+    ctx.beginPath(); ctx.moveTo(10, -14); ctx.quadraticCurveTo(6, -24, 12, -26); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(22, -14); ctx.quadraticCurveTo(26, -24, 20, -26); ctx.stroke();
+    // glowing red eye
+    ctx.fillStyle = '#ff1f3d';
+    ctx.shadowColor = '#ff1f3d';
+    ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(20, -8, 2.5, 0, 6.28); ctx.fill();
+    ctx.shadowBlur = 0;
+    // legs
+    ctx.strokeStyle = '#2c2f3d';
+    ctx.beginPath(); ctx.moveTo(-10, 14); ctx.lineTo(-10, 22); ctx.moveTo(8, 14); ctx.lineTo(8, 22); ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // faint hell-glow floor
+    var grad = ctx.createLinearGradient(0, H - 80, 0, H);
+    grad.addColorStop(0, 'rgba(255,31,61,0)');
+    grad.addColorStop(1, 'rgba(255,31,61,0.12)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H - 80, W, 80);
+
+    // rainbow trail
+    for (var i = trail.length - 1; i >= 0; i--) {
+      var t = trail[i];
+      var alpha = 1 - i / trail.length;
+      ctx.fillStyle = TRAIL_COLORS[i % TRAIL_COLORS.length];
+      ctx.globalAlpha = alpha * 0.55;
+      ctx.fillRect(t.x - 10, t.y - 8, 12, 16);
+    }
+    ctx.globalAlpha = 1;
+
+    // nuggets
+    for (var g = 0; g < nuggets.length; g++) {
+      var nug = nuggets[g];
+      ctx.fillStyle = '#ffb703';
+      ctx.shadowColor = '#ffb703';
+      ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(nug.x, nug.y, nug.r, 0, 6.28); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#8a5d00';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('G', nug.x, nug.y + 3.5);
+    }
+
+    // demons
+    for (var d = 0; d < demons.length; d++) {
+      var dm = demons[d];
+      ctx.save();
+      ctx.translate(dm.x, dm.y);
+      ctx.rotate(dm.spin);
+      ctx.fillStyle = '#3a1f1a';
+      ctx.strokeStyle = '#ff1f3d';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#ff1f3d';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      for (var s = 0; s < 5; s++) {
+        var a1 = (s / 5) * 6.28, a2 = ((s + 0.5) / 5) * 6.28;
+        ctx.lineTo(Math.cos(a1) * dm.r, Math.sin(a1) * dm.r);
+        ctx.lineTo(Math.cos(a2) * dm.r * 0.45, Math.sin(a2) * dm.r * 0.45);
+      }
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.shadowBlur = 0;
+
+    // particles
+    for (var p = 0; p < particles.length; p++) {
+      var pt = particles[p];
+      ctx.globalAlpha = pt.life / 30;
+      ctx.fillStyle = pt.color;
+      ctx.fillRect(pt.x - 2, pt.y - 2, 4, 4);
+    }
+    ctx.globalAlpha = 1;
+
+    if (state !== 'title') drawCow(cow.x, cow.y, invuln > 0);
+
+    // HUD
+    ctx.fillStyle = '#e8e6f0';
+    ctx.font = '14px "Press Start 2P", monospace';
+    ctx.textAlign = 'left';
+    if (state === 'play' || state === 'dead') {
+      ctx.fillText(String(scoreNow()), 20, 34);
+      ctx.fillStyle = '#ff3d5a';
+      var hstr = '';
+      for (var h = 0; h < hearts; h++) hstr += '♥ ';
+      ctx.fillText(hstr, 20, 60);
+      ctx.fillStyle = '#ffb703';
+      ctx.textAlign = 'right';
+      ctx.fillText('G:' + gold, W - 20, 34);
+    }
+
+    ctx.textAlign = 'center';
+    if (state === 'title') {
+      ctx.fillStyle = '#ffb703';
+      ctx.font = '28px "Press Start 2P", monospace';
+      ctx.fillText('THE COW PIT', W / 2, H / 2 - 40);
+      ctx.fillStyle = '#9a97ab';
+      ctx.font = '12px "Press Start 2P", monospace';
+      ctx.fillText('WEEK ' + week + ' · ' + mutName, W / 2, H / 2);
+      ctx.fillStyle = '#e8e6f0';
+      ctx.fillText('PRESS SPACE OR TAP TO FLY', W / 2, H / 2 + 44);
+    } else if (state === 'dead') {
+      ctx.fillStyle = '#ff1f3d';
+      ctx.font = '24px "Press Start 2P", monospace';
+      ctx.fillText('THE PIT CLAIMS YOU', W / 2, H / 2 - 16);
+      ctx.fillStyle = '#9a97ab';
+      ctx.font = '11px "Press Start 2P", monospace';
+      ctx.fillText('SPACE / TAP TO RUN IT BACK', W / 2, H / 2 + 24);
+    }
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+
+</body>
+</html>
