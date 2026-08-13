@@ -1,7 +1,7 @@
-(function () {
+﻿(function () {
   var CLIENT_ID = '1522159755546857492';
   var GUILD_ID = '347763631351660544';
-  var INVITE = 'https://discord.gg/2HGQaUJrug';
+  var INVITE = 'https://discord.gg/KPFGEWRtvB';
   var TOKEN_KEY = 'nc_discord_token';
   var MEMBER_UNTIL_KEY = 'nc_member_until';
   var RETURN_KEY = 'nc_return_to';
