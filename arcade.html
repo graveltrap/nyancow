@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -89,19 +89,19 @@
 <section class="page-hero" style="--hero-img:url('/assets/cow-bg-1.png'); --hero-pos:50%;">
   <div class="wrap">
     <h1>The Cow Pit</h1>
-    <p>Members-only weekly arcade. New mutator every Monday. Winner takes the prize â€” check #announcements for this week's stakes.</p>
+    <p>Members-only weekly arcade. New mutator every Monday. Winner takes the prize — check #announcements for this week's stakes.</p>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
     <div class="arcade-shell">
-      <p class="section-note" style="margin-bottom:12px;text-align:center;">Pro tip: click and hold to steer the cow with way more accuracy â€” the up/down arrows suck.</p>
+      <p class="section-note" style="margin-bottom:12px;text-align:center;">Pro tip: click and hold to steer the cow with way more accuracy — the up/down arrows suck.</p>
       <canvas id="pit-canvas" width="900" height="506"></canvas>
       <div class="arcade-hud">
-        <span id="hud-week">WEEK â€”</span>
+        <span id="hud-week">WEEK —</span>
         <span id="hud-mutator" class="mutator"></span>
-        <span id="hud-best">BEST â€”</span>
+        <span id="hud-best">BEST —</span>
       </div>
       <div id="scorecard" class="scorecard-box">
         <h3 style="font-family:var(--font-display);color:var(--accent-2);">Run Complete</h3>
@@ -115,17 +115,17 @@
       <div class="card">
         <h3>How It Works</h3>
         <p class="meta">Rules</p>
-        <p>Fly the cow. Dodge the demon glyphs. Grab gold â€” each nugget is worth 50. Three hearts, then it's over. Arrow keys / WASD, or drag on touch.</p>
+        <p>Fly the cow. Dodge the demon glyphs. Grab gold — each nugget is worth 50. Three hearts, then it's over. Arrow keys / WASD, or drag on touch.</p>
       </div>
       <div class="card">
         <h3>Weekly Mutator</h3>
         <p class="meta">Changes every Monday</p>
-        <p>The Pit reshuffles itself weekly â€” speed, demon density, and gold drought all shift. Same week, same Pit, for everyone. Fair fight.</p>
+        <p>The Pit reshuffles itself weekly — speed, demon density, and gold drought all shift. Same week, same Pit, for everyone. Fair fight.</p>
       </div>
       <div class="card">
         <h3>The Prize</h3>
         <p class="meta">Set in #announcements</p>
-        <p>Whatever leadership dreams up â€” "Clan Leader for 24 Hours" has been threatened. Post your score card in #show-off before Monday to enter.</p>
+        <p>Whatever leadership dreams up — "Clan Leader for 24 Hours" has been threatened. Post your score card in #show-off before Monday to enter.</p>
       </div>
     </div>
   </div>
@@ -227,9 +227,9 @@
       localStorage.setItem(bestKey, String(best));
       document.getElementById('hud-best').textContent = 'BEST ' + best;
     }
-    var card = 'ðŸ„ COW PIT â€” Week ' + week + ' [' + mutName + ']\n' +
+    var card = '🐄 COW PIT — Week ' + week + ' [' + mutName + ']\n' +
       'Score: ' + score + '  (gold ' + gold + ')\n' +
-      'Proof: ' + proofCode(score) + '  Â·  nyancow.gg/arcade';
+      'Proof: ' + proofCode(score) + '  ·  nyancow.gg/arcade';
     document.getElementById('scorecard-text').textContent = card;
     document.getElementById('scorecard').classList.add('show');
     document.getElementById('copy-scorecard').onclick = function () {
@@ -423,7 +423,7 @@
       ctx.fillText(String(scoreNow()), 20, 34);
       ctx.fillStyle = '#ff3d5a';
       var hstr = '';
-      for (var h = 0; h < hearts; h++) hstr += 'â™¥ ';
+      for (var h = 0; h < hearts; h++) hstr += '♥ ';
       ctx.fillText(hstr, 20, 60);
       ctx.fillStyle = '#ffb703';
       ctx.textAlign = 'right';
@@ -437,7 +437,7 @@
       ctx.fillText('THE COW PIT', W / 2, H / 2 - 40);
       ctx.fillStyle = '#9a97ab';
       ctx.font = '12px "Press Start 2P", monospace';
-      ctx.fillText('WEEK ' + week + ' Â· ' + mutName, W / 2, H / 2);
+      ctx.fillText('WEEK ' + week + ' · ' + mutName, W / 2, H / 2);
       ctx.fillStyle = '#e8e6f0';
       ctx.fillText('PRESS SPACE OR TAP TO FLY', W / 2, H / 2 + 44);
     } else if (state === 'dead') {

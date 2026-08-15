@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   var CLIENT_ID = '1522159755546857492';
   var GUILD_ID = '347763631351660544';
   var INVITE = 'https://discord.gg/KPFGEWRtvB';
