@@ -5,6 +5,7 @@
   var TOKEN_KEY = 'nc_discord_token';
   var MEMBER_UNTIL_KEY = 'nc_member_until';
   var RETURN_KEY = 'nc_return_to';
+  var LOGIN_TRIED_KEY = 'nc_login_tried';
   var SCOPE = 'identify guilds.members.read';
 
   function redirectUri() {
@@ -12,6 +13,13 @@
   }
 
   function sendToLogin() {
+    // Loop guard: if we already round-tripped through OAuth this session and
+    // still can't verify, fall through to the invite instead of bouncing forever.
+    if (sessionStorage.getItem(LOGIN_TRIED_KEY)) {
+      sendToWelcome();
+      return;
+    }
+    sessionStorage.setItem(LOGIN_TRIED_KEY, '1');
     sessionStorage.setItem(RETURN_KEY, location.pathname);
     var url = 'https://discord.com/api/oauth2/authorize'
       + '?client_id=' + encodeURIComponent(CLIENT_ID)
@@ -28,6 +36,7 @@
   }
 
   function reveal() {
+    sessionStorage.removeItem(LOGIN_TRIED_KEY);
     document.documentElement.classList.remove('nc-gate-pending');
   }
 
@@ -49,15 +58,16 @@
     if (res.status === 200) {
       localStorage.setItem(MEMBER_UNTIL_KEY, String(Date.now() + 12 * 60 * 60 * 1000));
       reveal();
-    } else if (res.status === 401) {
-      // Token expired — re-run OAuth; Discord redirects straight back for an already-authorized user.
+    } else if (res.status === 404) {
+      // Valid token, definitively not in the guild.
+      sendToWelcome();
+    } else {
+      // Expired/stale token, wrong scope, rate limit — anything ambiguous gets a fresh login.
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(MEMBER_UNTIL_KEY);
       sendToLogin();
-    } else {
-      sendToWelcome();
     }
   }).catch(function () {
-    sendToWelcome();
+    sendToLogin();
   });
 })();
