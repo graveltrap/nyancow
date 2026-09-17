@@ -49,6 +49,11 @@
     if (res.status === 200) {
       localStorage.setItem(MEMBER_UNTIL_KEY, String(Date.now() + 12 * 60 * 60 * 1000));
       reveal();
+    } else if (res.status === 401) {
+      // Token expired — re-run OAuth; Discord redirects straight back for an already-authorized user.
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(MEMBER_UNTIL_KEY);
+      sendToLogin();
     } else {
       sendToWelcome();
     }
