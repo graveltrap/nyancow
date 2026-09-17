@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.classList.add('nc-gate-pending');</script>
+<script src="/assets/js/auth-gate.js"></script>
+<title>S15 Runewords | Nyan Cow</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+  .rw {
+    --rw-bg: #090806;
+    --rw-panel-line: #3e3020;
+    --rw-gold: #d9a54a;
+    --rw-gold-light: #f3d48c;
+    --rw-text: #f4eee2;
+    --rw-muted: #aaa093;
+    --rw-green: #63d38c;
+    --rw-red: #e77c70;
+    --rw-shadow: 0 18px 55px rgba(0, 0, 0, .42);
+    color: var(--rw-text);
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .rw *, .rw *::before, .rw *::after { box-sizing: border-box; }
+  .rw button, .rw input, .rw textarea { font: inherit; }
+  .rw button { cursor: pointer; }
+
+  .rw .rw-meta { margin: 0 0 18px; color: var(--rw-muted); font-size: .9rem; }
+
+  .rw .layout {
+    display: grid;
+    grid-template-columns: minmax(310px, 410px) 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .rw .panel {
+    background: linear-gradient(155deg, rgba(29, 24, 17, .98), rgba(17, 14, 10, .98));
+    border: 1px solid var(--rw-panel-line);
+    border-radius: 16px;
+    box-shadow: var(--rw-shadow);
+  }
+  .rw .inventory { position: sticky; top: 18px; padding: 20px; }
+  .rw h2 { margin: 0; font-size: 1.15rem; color: var(--rw-text); }
+  .rw .hint { margin: 5px 0 18px; color: var(--rw-muted); font-size: .9rem; }
+
+  .rw .rune-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .rw .rune-field {
+    display: grid;
+    grid-template-columns: 1fr 68px;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 8px 9px;
+    background: #100d09;
+    border: 1px solid #2d2419;
+    border-radius: 9px;
+  }
+  .rw .rune-field label { color: var(--rw-gold-light); font-weight: 750; }
+  .rw input[type="number"] {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #51402b;
+    border-radius: 7px;
+    background: #080705;
+    color: var(--rw-text);
+    padding: 7px 8px;
+    text-align: right;
+  }
+  .rw input:focus, .rw textarea:focus {
+    outline: 2px solid rgba(217, 165, 74, .45);
+    border-color: var(--rw-gold);
+  }
+
+  .rw .paste-box { margin-top: 17px; }
+  .rw .goal-box { margin-top: 17px; padding-top: 17px; border-top: 1px solid var(--rw-panel-line); }
+  .rw .goal-output { margin-top: 10px; padding: 12px; border: 1px solid #51402b; border-radius: 9px; background: #0d0b08; }
+  .rw .goal-output:empty { display: none; }
+  .rw .goal-title { color: var(--rw-gold-light); font-weight: 850; }
+  .rw .goal-line { margin-top: 5px; color: var(--rw-muted); }
+  .rw .goal-line strong { color: var(--rw-text); }
+  .rw textarea {
+    width: 100%;
+    min-height: 76px;
+    resize: vertical;
+    border: 1px solid #51402b;
+    border-radius: 9px;
+    background: #080705;
+    color: var(--rw-text);
+    padding: 10px;
+  }
+  .rw .actions { display: flex; gap: 8px; margin-top: 9px; }
+  .rw .button {
+    border: 1px solid #6d512c;
+    border-radius: 9px;
+    background: linear-gradient(#b87726, #835018);
+    color: white;
+    padding: 9px 13px;
+    font-weight: 800;
+  }
+  .rw .button.secondary { background: transparent; color: var(--rw-muted); border-color: #433729; }
+  .rw .button:hover { filter: brightness(1.12); }
+
+  .rw .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .rw .metric { padding: 14px 16px; }
+  .rw .metric strong { display: block; color: var(--rw-gold-light); font-size: 1.55rem; line-height: 1.1; }
+  .rw .metric span { color: var(--rw-muted); font-size: .82rem; }
+
+  .rw .results { overflow: hidden; }
+  .rw .result-head {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.2fr) minmax(175px, 1fr) minmax(150px, 1fr) 90px;
+    gap: 14px;
+    padding: 12px 18px;
+    color: var(--rw-muted);
+    border-bottom: 1px solid var(--rw-panel-line);
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .rw .result-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.2fr) minmax(175px, 1fr) minmax(150px, 1fr) 90px;
+    gap: 14px;
+    align-items: center;
+    padding: 15px 18px;
+    border-bottom: 1px solid #2b241b;
+  }
+  .rw .result-row:last-child { border-bottom: 0; }
+  .rw .result-row.craftable { background: linear-gradient(90deg, rgba(43, 122, 72, .2), transparent 65%); }
+  .rw .item-name { font-weight: 850; }
+  .rw .item-type { color: var(--rw-muted); font-size: .8rem; margin-top: 2px; }
+  .rw .recipe { color: var(--rw-gold-light); }
+  .rw .missing { color: var(--rw-red); }
+  .rw .complete { color: var(--rw-green); font-weight: 850; }
+  .rw .copies { text-align: right; font-weight: 850; }
+  .rw .notes { margin-top: 14px; padding: 18px; }
+  .rw .notes p { margin: 7px 0 0; color: var(--rw-muted); }
+  .rw .notes a { color: var(--rw-gold-light); }
+
+  @media (max-width: 900px) {
+    .rw .layout { grid-template-columns: 1fr; }
+    .rw .inventory { position: static; }
+  }
+  @media (max-width: 650px) {
+    .rw .summary { grid-template-columns: 1fr; }
+    .rw .result-head { display: none; }
+    .rw .result-row { grid-template-columns: 1fr; gap: 5px; }
+    .rw .copies { text-align: left; }
+    .rw .rune-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand"><a href="/" class="brand-mark"><img src="/assets/logo-mark.png" alt="">NYAN COW</a></div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/news.html">News</a>
+      <a href="/builds/">Builds</a>
+      <a href="/roster.html">Roster</a>
+      <a href="/about.html">About</a>
+      <a href="/videos.html">Videos</a>
+      <a href="/arcade.html">Arcade</a>
+      <a href="https://discord.gg/2HGQaUJrug" class="discord-btn" target="_blank" rel="noopener">Discord</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" style="--hero-img:url('/assets/cow-bg-2.png'); --hero-pos:40%;">
+  <div class="wrap">
+    <h1>S15 Runeword Calculator</h1>
+    <p>Enter the clan's rune inventory and instantly see which runeword items you can craft.</p>
+  </div>
+</section>
+
+<section class="section rw">
+  <div class="wrap">
+    <p class="rw-meta">19 recipes · updated September 17, 2026</p>
+    <div class="layout">
+      <section class="panel inventory" aria-labelledby="inventory-title">
+        <h2 id="inventory-title">Rune inventory</h2>
+        <p class="hint">Enter how many of each rune your group owns.</p>
+        <div class="rune-grid" id="rune-grid"></div>
+
+        <div class="paste-box">
+          <label for="bulk-input"><strong>Quick paste</strong></label>
+          <p class="hint">Example: 5xamn 9xeth 1xort 3xtal</p>
+          <textarea id="bulk-input" placeholder="Paste a rune list here"></textarea>
+          <div class="actions">
+            <button class="button" id="apply-list" type="button">Apply list</button>
+            <button class="button secondary" id="reset" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="goal-box">
+          <label for="goal-input"><strong>Crafting goal</strong></label>
+          <p class="hint">Ask for one or more items. Example: “I want to build 5 Stealths and 1 Spirit.”</p>
+          <textarea id="goal-input" placeholder="I want to build 5 Stealths"></textarea>
+          <div class="actions">
+            <button class="button" id="check-goal" type="button">Check goal</button>
+          </div>
+          <div id="goal-output" class="goal-output" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section aria-label="Crafting results">
+        <div class="summary">
+          <div class="panel metric"><strong id="craftable-count">0</strong><span>items craftable now</span></div>
+          <div class="panel metric"><strong id="closest-count">0</strong><span>items missing one rune</span></div>
+          <div class="panel metric"><strong id="rune-total">0</strong><span>runes in inventory</span></div>
+        </div>
+        <div class="panel results">
+          <div class="result-head">
+            <div>Item</div><div>Recipe</div><div>Status</div><div>Copies</div>
+          </div>
+          <div id="results"></div>
+        </div>
+        <aside class="panel notes">
+          <h2>Current-system notes</h2>
+          <p>Compatible item bases are shown under each recipe. You still need a suitable base item in addition to the listed runes.</p>
+          <p>The newly reported Cube interaction lets three Stealth items be recycled into a new Stealth carrying an Enigma bonus. Check the Cube preview before committing items while the season is still being updated.</p>
+          <p>Inventory is stored only in your browser — share rune lists in Discord with the quick-paste format so others can load them.</p>
+        </aside>
+      </section>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; Nyan Cow</span>
+  </div>
+</footer>
+
+<script>
+  const RUNES = ["Amn", "Ber", "Eth", "Ist", "Ith", "Jah", "Lo", "Mal", "Ohm", "Ort", "Ral", "Sol", "Tal", "Thul", "Tir", "Vex"];
+
+  const ITEMS = [
+    { name: "Ancient's Pledge", type: "Focus, Shield, or Totem", runes: ["Ral", "Ort", "Tal"] },
+    { name: "Call to Arms", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Sword, Totem, or Wand", runes: ["Amn", "Ral", "Mal", "Ist", "Ohm"] },
+    { name: "Edge", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, Two-Handed Axe, Mace, Scythe, or Sword", runes: ["Tir", "Tal", "Amn"] },
+    { name: "Enigma", type: "Chest Armor", runes: ["Jah", "Ith", "Ber"] },
+    { name: "Grief", type: "One-Handed Axe or Sword", runes: ["Eth", "Tir", "Lo", "Mal", "Ral"] },
+    { name: "Holy Thunder", type: "Flail or Mace", runes: ["Eth", "Ral", "Ort", "Tal"] },
+    { name: "Infinity", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, Two-Handed Axe, Mace, Scythe, or Sword", runes: ["Ber", "Mal", "Ber", "Ist"] },
+    { name: "Insight", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, or Two-Handed Scythe", runes: ["Ral", "Tir", "Tal", "Sol"] },
+    { name: "King's Grace", type: "Flail, Mace, or Sword", runes: ["Amn", "Ral", "Thul"] },
+    { name: "Leaf", type: "Staff", runes: ["Tir", "Ral"] },
+    { name: "Lore", type: "Helm", runes: ["Ort", "Sol"] },
+    { name: "Pattern", type: "Dagger", runes: ["Tal", "Ort", "Thul"] },
+    { name: "Phoenix", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Shield, Sword, Totem, or Wand", runes: ["Vex", "Vex", "Lo", "Jah"] },
+    { name: "Prudence", type: "Chest Armor", runes: ["Mal", "Tir"] },
+    { name: "Rain", type: "Chest Armor", runes: ["Ort", "Mal", "Ith"] },
+    { name: "Spirit", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Shield, Sword, Totem, or Wand", runes: ["Tal", "Thul", "Ort", "Amn"] },
+    { name: "Stealth", type: "Chest Armor", runes: ["Tal", "Eth"] },
+    { name: "Strength", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Sword, Totem, or Wand", runes: ["Amn", "Tir"] },
+    { name: "Zephyr", type: "Bow or Crossbow", runes: ["Ort", "Eth"] }
+  ];
+
+  const inventory = Object.fromEntries(RUNES.map(rune => [rune, 0]));
+
+  function loadInventory() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("runeword-inventory") || "{}");
+      RUNES.forEach(rune => inventory[rune] = Math.max(0, Number(saved[rune]) || 0));
+    } catch (_) {}
+  }
+
+  function saveInventory() {
+    localStorage.setItem("runeword-inventory", JSON.stringify(inventory));
+  }
+
+  function countRequirements(runes) {
+    return runes.reduce((counts, rune) => {
+      counts[rune] = (counts[rune] || 0) + 1;
+      return counts;
+    }, {});
+  }
+
+  function analyze(item) {
+    const required = countRequirements(item.runes);
+    const missing = {};
+    let missingTotal = 0;
+    let copies = Infinity;
+
+    Object.entries(required).forEach(([rune, quantity]) => {
+      const short = Math.max(0, quantity - inventory[rune]);
+      if (short) missing[rune] = short;
+      missingTotal += short;
+      copies = Math.min(copies, Math.floor(inventory[rune] / quantity));
+    });
+
+    return { ...item, required, missing, missingTotal, copies: Number.isFinite(copies) ? copies : 0 };
+  }
+
+  function formatQuantities(values) {
+    return Object.entries(values)
+      .map(([rune, quantity]) => quantity === 1 ? rune : `${rune} ×${quantity}`)
+      .join(" + ");
+  }
+
+  function renderInputs() {
+    document.getElementById("rune-grid").innerHTML = RUNES.map(rune => `
+      <div class="rune-field">
+        <label for="rune-${rune}">${rune}</label>
+        <input id="rune-${rune}" data-rune="${rune}" type="number" min="0" step="1" inputmode="numeric" value="${inventory[rune]}">
+      </div>
+    `).join("");
+
+    document.querySelectorAll("[data-rune]").forEach(input => {
+      input.addEventListener("input", event => {
+        const rune = event.target.dataset.rune;
+        inventory[rune] = Math.max(0, Math.floor(Number(event.target.value) || 0));
+        saveInventory();
+        renderResults();
+      });
+    });
+  }
+
+  function renderResults() {
+    const analyzed = ITEMS.map(analyze).sort((a, b) =>
+      a.missingTotal - b.missingTotal || b.copies - a.copies || a.name.localeCompare(b.name)
+    );
+
+    document.getElementById("craftable-count").textContent = analyzed.filter(item => item.missingTotal === 0).length;
+    document.getElementById("closest-count").textContent = analyzed.filter(item => item.missingTotal === 1).length;
+    document.getElementById("rune-total").textContent = Object.values(inventory).reduce((a, b) => a + b, 0);
+
+    document.getElementById("results").innerHTML = analyzed.map(item => {
+      const craftable = item.missingTotal === 0;
+      const status = craftable
+        ? `<span class="complete">Can craft now</span>`
+        : `<span class="missing">Missing ${formatQuantities(item.missing)}</span>`;
+      return `
+        <article class="result-row ${craftable ? "craftable" : ""}">
+          <div><div class="item-name">${item.name}</div><div class="item-type">${item.type}</div></div>
+          <div class="recipe">${item.runes.join(" + ")}</div>
+          <div>${status}</div>
+          <div class="copies">${item.copies}</div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function applyBulkList() {
+    const text = document.getElementById("bulk-input").value;
+    const found = Object.fromEntries(RUNES.map(rune => [rune, 0]));
+    const runePattern = RUNES.join("|");
+    const pattern = new RegExp(`(?:\\b(\\d+)\\s*[x×]?\\s*(${runePattern})\\b)|(?:\\b(${runePattern})\\s*[x×]?\\s*(\\d+)\\b)|(?:\\b(${runePattern})\\b)`, "gi");
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      const runeText = match[2] || match[3] || match[5];
+      const rune = RUNES.find(value => value.toLowerCase() === runeText.toLowerCase());
+      const quantity = Number(match[1] || match[4] || 1);
+      found[rune] += quantity;
+    }
+    RUNES.forEach(rune => inventory[rune] = found[rune]);
+    saveInventory();
+    renderInputs();
+    renderResults();
+  }
+
+  function normalizeName(value) {
+    return value.toLowerCase().replace(/[’']/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  }
+
+  function parseGoal(text) {
+    const normalized = normalizeName(text);
+    const goals = [];
+    ITEMS.forEach(item => {
+      const name = normalizeName(item.name);
+      const variants = [name, `${name}s`];
+      let index = -1;
+      let matched = "";
+      variants.forEach(variant => {
+        const found = normalized.indexOf(variant);
+        if (found >= 0 && (index < 0 || variant.length > matched.length)) {
+          index = found;
+          matched = variant;
+        }
+      });
+      if (index >= 0) {
+        const before = normalized.slice(Math.max(0, index - 24), index);
+        const quantityMatch = before.match(/(\d+)\s*(?:x\s*)?$/);
+        goals.push({ item, quantity: Math.max(1, Number(quantityMatch?.[1] || 1)) });
+      }
+    });
+    return goals;
+  }
+
+  function checkGoal() {
+    const output = document.getElementById("goal-output");
+    const goals = parseGoal(document.getElementById("goal-input").value);
+    if (!goals.length) {
+      output.innerHTML = `<div class="missing">No recipe name recognized. Try “5 Stealths” or “2 Lore and 1 Spirit.”</div>`;
+      return;
+    }
+
+    const required = {};
+    goals.forEach(({ item, quantity }) => item.runes.forEach(rune => {
+      required[rune] = (required[rune] || 0) + quantity;
+    }));
+    const missing = Object.fromEntries(Object.entries(required)
+      .map(([rune, quantity]) => [rune, Math.max(0, quantity - inventory[rune])])
+      .filter(([, quantity]) => quantity > 0));
+    const ready = Object.keys(missing).length === 0;
+
+    output.innerHTML = `
+      <div class="goal-title">${goals.map(({ item, quantity }) => `${quantity} × ${item.name}`).join(" + ")}</div>
+      <div class="goal-line"><strong>Runes required:</strong> ${formatQuantities(required)}</div>
+      <div class="goal-line"><strong>Inventory:</strong> ${formatQuantities(Object.fromEntries(Object.keys(required).map(rune => [rune, inventory[rune]])))}</div>
+      <div class="goal-line ${ready ? "complete" : "missing"}"><strong>${ready ? "Ready to build" : "Still needed:"}</strong> ${ready ? "You have every required rune." : formatQuantities(missing)}</div>
+    `;
+  }
+
+  document.getElementById("apply-list").addEventListener("click", applyBulkList);
+  document.getElementById("check-goal").addEventListener("click", checkGoal);
+  document.getElementById("reset").addEventListener("click", () => {
+    RUNES.forEach(rune => inventory[rune] = 0);
+    document.getElementById("bulk-input").value = "";
+    saveInventory();
+    renderInputs();
+    renderResults();
+  });
+
+  loadInventory();
+  renderInputs();
+  renderResults();
+</script>
+</body>
+</html>
