@@ -177,7 +177,7 @@
 
 <section class="section rw">
   <div class="wrap">
-    <p class="rw-meta">19 recipes · updated September 17, 2026</p>
+    <p class="rw-meta">19 recipes · Verified for S15 patch 3.2.2 — checked October 19, 2026</p>
     <div class="layout">
       <section class="panel inventory" aria-labelledby="inventory-title">
         <h2 id="inventory-title">Rune inventory</h2>
@@ -220,7 +220,8 @@
         <aside class="panel notes">
           <h2>Current-system notes</h2>
           <p>Compatible item bases are shown under each recipe. You still need a suitable base item in addition to the listed runes.</p>
-          <p>The newly reported Cube interaction lets three Stealth items be recycled into a new Stealth carrying an Enigma bonus. Check the Cube preview before committing items while the season is still being updated.</p>
+          <p>Recipes show the canonical rune sequence, but community sources disagree on whether order matters in the Cube — use the Cube preview as final confirmation before committing.</p>
+          <p><strong class="missing">Unverified / experimental:</strong> player reports describe a Cube interaction recycling three Stealth items into a new Stealth carrying an Enigma bonus. This is NOT confirmed — don't burn materials on it unless the Cube preview shows it.</p>
           <p>Inventory is stored only in your browser — share rune lists in Discord with the quick-paste format so others can load them.</p>
         </aside>
       </section>
@@ -239,23 +240,23 @@
 
   const ITEMS = [
     { name: "Ancient's Pledge", type: "Focus, Shield, or Totem", runes: ["Ral", "Ort", "Tal"] },
-    { name: "Call to Arms", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Sword, Totem, or Wand", runes: ["Amn", "Ral", "Mal", "Ist", "Ohm"] },
+    { name: "Call to Arms", type: "One-Handed Axe, Dagger, Flail, Focus, One-Handed Mace, One-Handed Scythe, One-Handed Sword, Totem, or Wand", runes: ["Amn", "Ral", "Mal", "Ist", "Ohm"] },
     { name: "Edge", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, Two-Handed Axe, Mace, Scythe, or Sword", runes: ["Tir", "Tal", "Amn"] },
     { name: "Enigma", type: "Chest Armor", runes: ["Jah", "Ith", "Ber"] },
     { name: "Grief", type: "One-Handed Axe or Sword", runes: ["Eth", "Tir", "Lo", "Mal", "Ral"] },
-    { name: "Holy Thunder", type: "Flail or Mace", runes: ["Eth", "Ral", "Ort", "Tal"] },
+    { name: "Holy Thunder", type: "Flail or One-Handed Mace", runes: ["Eth", "Ral", "Ort", "Tal"] },
     { name: "Infinity", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, Two-Handed Axe, Mace, Scythe, or Sword", runes: ["Ber", "Mal", "Ber", "Ist"] },
     { name: "Insight", type: "Bow, Crossbow, Glaive, Polearm, Quarterstaff, Staff, or Two-Handed Scythe", runes: ["Ral", "Tir", "Tal", "Sol"] },
-    { name: "King's Grace", type: "Flail, Mace, or Sword", runes: ["Amn", "Ral", "Thul"] },
+    { name: "King's Grace", type: "Flail, One-Handed Mace, or One-Handed Sword", runes: ["Amn", "Ral", "Thul"] },
     { name: "Leaf", type: "Staff", runes: ["Tir", "Ral"] },
     { name: "Lore", type: "Helm", runes: ["Ort", "Sol"] },
     { name: "Pattern", type: "Dagger", runes: ["Tal", "Ort", "Thul"] },
-    { name: "Phoenix", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Shield, Sword, Totem, or Wand", runes: ["Vex", "Vex", "Lo", "Jah"] },
+    { name: "Phoenix", type: "One-Handed Axe, Dagger, Flail, Focus, One-Handed Mace, One-Handed Scythe, Shield, One-Handed Sword, Totem, or Wand", runes: ["Vex", "Vex", "Lo", "Jah"] },
     { name: "Prudence", type: "Chest Armor", runes: ["Mal", "Tir"] },
     { name: "Rain", type: "Chest Armor", runes: ["Ort", "Mal", "Ith"] },
-    { name: "Spirit", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Shield, Sword, Totem, or Wand", runes: ["Tal", "Thul", "Ort", "Amn"] },
+    { name: "Spirit", type: "One-Handed Axe, Dagger, Flail, Focus, One-Handed Mace, One-Handed Scythe, Shield, One-Handed Sword, Totem, or Wand", runes: ["Tal", "Thul", "Ort", "Amn"] },
     { name: "Stealth", type: "Chest Armor", runes: ["Tal", "Eth"] },
-    { name: "Strength", type: "Axe, Dagger, Flail, Focus, Mace, Scythe, Sword, Totem, or Wand", runes: ["Amn", "Tir"] },
+    { name: "Strength", type: "One-Handed Axe, Dagger, Flail, Focus, One-Handed Mace, One-Handed Scythe, One-Handed Sword, Totem, or Wand", runes: ["Amn", "Tir"] },
     { name: "Zephyr", type: "Bow or Crossbow", runes: ["Ort", "Eth"] }
   ];
 
